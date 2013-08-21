@@ -29,6 +29,23 @@ def pullteams(sourcefile):
     
     return team_order, teams, draft_order
 
+def setoptions():
+    '''open draft options window'''
+    root = Tk()
+    optframe = Frame(root, padx=5,pady=5)
+    optframe.grid(column=0,row=0,sticky=(N,S,E,W))
+    optframe.columnconfigure(0, weight=1)
+    optframe.rowconfigure(0,weight=1)
+        
+    Button(optframe, text='Save Options', command=lambda : saveoptions(optframe))
+    
+    for child in optframe.winfo_children():
+        child.grid_configure(padx=1,pady=5)
+
+def saveoptions(optframe):
+    print "Options saved"
+    optframe.destroy()
+
 def runmain():
     root = Tk()
     root.title("Draft Master v0.1")
@@ -43,13 +60,14 @@ def runmain():
     
     colnum = 0
     for team in team_order:
-        Label(mainframe, text=team).grid(column=colnum,row=0,sticky=(W,E))
-        Listbox(mainframe).grid(column=colnum,row=1,sticky=(W,E))
+        Label(mainframe, text=team).grid(column=colnum,row=1,sticky=(W,E))
+        Listbox(mainframe).grid(column=colnum,row=2,sticky=(W,E))
 
         colnum+=1
+    Button(mainframe, text='Set Options',command=setoptions).grid(column=0,row=0,sticky=E)
         
     for child in mainframe.winfo_children():
-        child.grid_configure(padx=5,pady=5)
+        child.grid_configure(padx=1,pady=5)
 
     root.mainloop()
 

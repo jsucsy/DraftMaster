@@ -12,6 +12,8 @@ from team import Team
 def setfordraft():
     #qb, rb, wr, qb_headers,rb_headers, wr_headers = set_players_yahoo()
     set_players_yahoo()
+    setteams()
+    setbackup()
     backup()
     avail()
 
@@ -249,53 +251,69 @@ def parse_yahoo(sourcefile):
     
     return players, headers
 
+def setbackup():
+    temp = raw_input('Set backup name, n for no backup: ')
+    if temp.lower() != 'n':
+        c.backup = 'backup\\%s' % temp
+        os.mkdir(c.workingdir + c.backup)
+        c.backup = 'backup\\%s\\' % temp
+
 def backup():
     
-    pickle.dump(c.qb, open(c.workingdir + 'backup\\qb.pkl', 'wb+'))
-    pickle.dump(c.rb, open(c.workingdir + 'backup\\rb.pkl', 'wb+'))
-    pickle.dump(c.wr, open(c.workingdir + 'backup\\wr.pkl', 'wb+'))
-    pickle.dump(c.te, open(c.workingdir + 'backup\\te.pkl', 'wb+'))
-    pickle.dump(c.ki, open(c.workingdir + 'backup\\ki.pkl', 'wb+'))
-    pickle.dump(c.ds, open(c.workingdir + 'backup\\ds.pkl', 'wb+'))
+    pickle.dump(c.qb, open(c.workingdir + c.backup + 'qb.pkl', 'wb+'))
+    pickle.dump(c.rb, open(c.workingdir + c.backup + 'rb.pkl', 'wb+'))
+    pickle.dump(c.wr, open(c.workingdir + c.backup + 'wr.pkl', 'wb+'))
+    pickle.dump(c.te, open(c.workingdir + c.backup + 'te.pkl', 'wb+'))
+    pickle.dump(c.ki, open(c.workingdir + c.backup + 'ki.pkl', 'wb+'))
+    pickle.dump(c.ds, open(c.workingdir + c.backup + 'ds.pkl', 'wb+'))
     
-    pickle.dump(c.qb_headers, open(c.workingdir + 'backup\\qb_headers.pkl', 'wb+'))
-    pickle.dump(c.rb_headers, open(c.workingdir + 'backup\\rb_headers.pkl', 'wb+'))
-    pickle.dump(c.wr_headers, open(c.workingdir + 'backup\\wr_headers.pkl', 'wb+'))
-    pickle.dump(c.te_headers, open(c.workingdir + 'backup\\te_headers.pkl', 'wb+'))
-    pickle.dump(c.ki_headers, open(c.workingdir + 'backup\\ki_headers.pkl', 'wb+'))
-    pickle.dump(c.ds_headers, open(c.workingdir + 'backup\\ds_headers.pkl', 'wb+'))
+    pickle.dump(c.qb_headers, open(c.workingdir + c.backup + 'qb_headers.pkl', 'wb+'))
+    pickle.dump(c.rb_headers, open(c.workingdir + c.backup + 'rb_headers.pkl', 'wb+'))
+    pickle.dump(c.wr_headers, open(c.workingdir + c.backup + 'wr_headers.pkl', 'wb+'))
+    pickle.dump(c.te_headers, open(c.workingdir + c.backup + 'te_headers.pkl', 'wb+'))
+    pickle.dump(c.ki_headers, open(c.workingdir + c.backup + 'ki_headers.pkl', 'wb+'))
+    pickle.dump(c.ds_headers, open(c.workingdir + c.backup + 'ds_headers.pkl', 'wb+'))
     
-    pickle.dump(c.nom, open(c.workingdir + 'backup\\nom.pkl', 'wb+'))
+    pickle.dump(c.nom, open(c.workingdir + c.backup + 'nom.pkl', 'wb+'))
     
-    pickle.dump(c.teams, open(c.workingdir + 'backup\\teams.pkl', 'wb+'))
+    pickle.dump(c.teams, open(c.workingdir + c.backup + 'teams.pkl', 'wb+'))
+
     return
 
 def recover():
+    saves = os.listdir(c.workingdir + '\\backup\\')
+    counter = 0
+    for save in saves:
+        print "%s: %s" % (counter, save)
         
-    c.qb = pickle.load(open(c.workingdir + 'backup\\qb.pkl', 'rb+'))
-    c.rb = pickle.load(open(c.workingdir + 'backup\\rb.pkl', 'rb+'))
-    c.wr = pickle.load(open(c.workingdir + 'backup\\wr.pkl', 'rb+'))
-    c.te = pickle.load(open(c.workingdir + 'backup\\te.pkl', 'rb+'))
-    c.ki = pickle.load(open(c.workingdir + 'backup\\ki.pkl', 'rb+'))
-    c.ds = pickle.load(open(c.workingdir + 'backup\\ds.pkl', 'rb+'))
+    torecover = int(raw_input("Pick draft to recover: "))
+    c.backup = 'backup\\%s\\' % saves[torecover]
+    print c.backup    
     
-    c.qb_headers = pickle.load(open(c.workingdir + 'backup\\qb_headers.pkl', 'rb+'))
-    c.rb_headers = pickle.load(open(c.workingdir + 'backup\\rb_headers.pkl', 'rb+'))
-    c.wr_headers = pickle.load(open(c.workingdir + 'backup\\wr_headers.pkl', 'rb+'))
-    c.te_headers = pickle.load(open(c.workingdir + 'backup\\te_headers.pkl', 'rb+'))
-    c.ki_headers = pickle.load(open(c.workingdir + 'backup\\ki_headers.pkl', 'rb+'))
-    c.ds_headers = pickle.load(open(c.workingdir + 'backup\\ds_headers.pkl', 'rb+'))
+    c.qb = pickle.load(open(c.workingdir + c.backup + 'qb.pkl', 'rb+'))
+    c.rb = pickle.load(open(c.workingdir + c.backup + 'rb.pkl', 'rb+'))
+    c.wr = pickle.load(open(c.workingdir + c.backup + 'wr.pkl', 'rb+'))
+    c.te = pickle.load(open(c.workingdir + c.backup + 'te.pkl', 'rb+'))
+    c.ki = pickle.load(open(c.workingdir + c.backup + 'ki.pkl', 'rb+'))
+    c.ds = pickle.load(open(c.workingdir + c.backup + 'ds.pkl', 'rb+'))
     
-    c.nom = pickle.load(open(c.workingdir + 'backup\\nom.pkl', 'rb+'))
+    c.qb_headers = pickle.load(open(c.workingdir + c.backup + 'qb_headers.pkl', 'rb+'))
+    c.rb_headers = pickle.load(open(c.workingdir + c.backup + 'rb_headers.pkl', 'rb+'))
+    c.wr_headers = pickle.load(open(c.workingdir + c.backup + 'wr_headers.pkl', 'rb+'))
+    c.te_headers = pickle.load(open(c.workingdir + c.backup + 'te_headers.pkl', 'rb+'))
+    c.ki_headers = pickle.load(open(c.workingdir + c.backup + 'ki_headers.pkl', 'rb+'))
+    c.ds_headers = pickle.load(open(c.workingdir + c.backup + 'ds_headers.pkl', 'rb+'))
     
-    c.teams = pickle.load(open(c.workingdir + 'backup\\teams.pkl', 'rb+'))
+    c.nom = pickle.load(open(c.workingdir + c.backup + 'nom.pkl', 'rb+'))
+    
+    c.teams = pickle.load(open(c.workingdir + c.backup + 'teams.pkl', 'rb+'))
     
     return
 
 
 def testall():
     setfordraft()
-    setteams()
+    #setteams()
     backup()
     recover()
     qb()

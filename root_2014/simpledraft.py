@@ -9,7 +9,7 @@ import os
 from team import Team
 
 # ----------- functions for live draft-----------------
-def setfordraft():
+def setupdraft():
     #qb, rb, wr, qb_headers,rb_headers, wr_headers = set_players_yahoo()
     set_players_yahoo()
     setteams()
@@ -310,9 +310,12 @@ def recover():
     
     return
 
+def saveas():
+    setbackup()
+    backup()
 
 def testall():
-    setfordraft()
+    setupdraft()
     #setteams()
     backup()
     recover()

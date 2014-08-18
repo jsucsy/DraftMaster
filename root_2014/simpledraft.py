@@ -5,8 +5,51 @@ Created on Aug 14, 2014
 '''
 import config as c
 import cPickle as pickle
-import os
+import os, platform
 from team import Team
+
+        
+# ---------------private-ish functions-----------
+def set_players_yahoo():
+    sourcefile_qb = c.workingdir + '20140815_yahoo_qb.csv'
+    sourcefile_rb = c.workingdir + '20140815_yahoo_rb.csv'
+    sourcefile_wr = c.workingdir + '20140815_yahoo_wr.csv'
+    sourcefile_te = c.workingdir + '20140815_yahoo_te.csv'
+    sourcefile_ki = c.workingdir + '20140815_yahoo_ki.csv'
+    
+    
+    c.qb, c.qb_headers = parse_yahoo(sourcefile_qb)
+    #c.rb, c.rb_headers = parse_yahoo(sourcefile_rb)
+    #c.wr, c.wr_headers = parse_yahoo(sourcefile_wr)
+    #c.te, c.te_headers = parse_yahoo(sourcefile_te)
+    #c.ki, c.ki_headers = parse_yahoo(sourcefile_ki)
+    
+    #return qb, rb, wr, qb_headers,rb_headers, wr_headers
+
+def parse_yahoo(sourcefile):
+    players = []
+    headers = []
+    with open(sourcefile, 'rb+') as source:
+        linenum = 0
+        for line in source:
+            fields = line.split('|')
+            if linenum == 0:
+                headers = fields
+            else:
+                fields[0] = fields[0].upper()
+                player = fields
+                players.append(player)
+            linenum += 1
+    
+    return players, headers
+
+def setbackup():
+    temp = raw_input('Set backup name, n for no backup: ')
+    if temp.lower() != 'n':
+        c.backup = 'backup\\%s' % temp
+        os.mkdir(c.workingdir + c.backup)
+        c.backup = 'backup\\%s\\' % temp
+
 
 # ----------- functions for live draft-----------------
 def setupdraft():
@@ -36,6 +79,7 @@ def setteams():
 
 def nomq(name=''):
     nomtemp=[]
+    nomtemp.append('qb')
     for player in c.qb:
         if name.upper() in player[0]:
             nomtemp.append(player)
@@ -56,6 +100,7 @@ def nomq(name=''):
 
 def nomr(name=''):
     nomtemp=[]
+    nomtemp.append('rb')
     for player in c.rb:
         if name.upper() in player[0]:
             nomtemp.append(player)
@@ -76,6 +121,7 @@ def nomr(name=''):
 
 def nomw(name=''):
     nomtemp=[]
+    nomtemp.append('wr')
     for player in c.wr:
         if name.upper() in player[0]:
             nomtemp.append(player)
@@ -96,6 +142,7 @@ def nomw(name=''):
 
 def nomt(name=''):
     nomtemp=[]
+    nomtemp.append('te')
     for player in c.te:
         if name.upper() in player[0]:
             nomtemp.append(player)
@@ -116,6 +163,7 @@ def nomt(name=''):
 
 def nomk(name=''):
     nomtemp=[]
+    nomtemp.append('ki')
     for player in c.ki:
         if name.upper() in player[0]:
             nomtemp.append(player)
@@ -136,6 +184,7 @@ def nomk(name=''):
 
 def nomd(name=''):
     nomtemp=[]
+    nomtemp.append('ds')
     for player in c.ds:
         if name.upper() in player[0]:
             nomtemp.append(player)
@@ -212,51 +261,11 @@ def avail():
 def showme():
     funcs = ['avail','setfordraft','qb','rb','wr','te','ki','ds',
              'nomq','nomr','nomw','nomt','nomk','nomd',
-             'backup','recover', 'teams']
+             'backup','recover', 'teams', 'setnode',
+             'draft', 'roster']
     for func in funcs:
         print func
     
-        
-# ---------------private-ish functions-----------
-def set_players_yahoo():
-    sourcefile_qb = c.workingdir + '20140815_yahoo_qb.csv'
-    sourcefile_rb = c.workingdir + '20140815_yahoo_rb.csv'
-    sourcefile_wr = c.workingdir + '20140815_yahoo_wr.csv'
-    sourcefile_te = c.workingdir + '20140815_yahoo_te.csv'
-    sourcefile_ki = c.workingdir + '20140815_yahoo_ki.csv'
-    
-    
-    c.qb, c.qb_headers = parse_yahoo(sourcefile_qb)
-    c.rb, c.rb_headers = parse_yahoo(sourcefile_rb)
-    c.wr, c.wr_headers = parse_yahoo(sourcefile_wr)
-    c.te, c.te_headers = parse_yahoo(sourcefile_te)
-    c.ki, c.ki_headers = parse_yahoo(sourcefile_ki)
-    
-    #return qb, rb, wr, qb_headers,rb_headers, wr_headers
-
-def parse_yahoo(sourcefile):
-    players = []
-    headers = []
-    with open(sourcefile, 'rb+') as source:
-        linenum = 0
-        for line in source:
-            fields = line.split('|')
-            if linenum == 0:
-                headers = fields
-            else:
-                fields[0] = fields[0].upper()
-                player = fields
-                players.append(player)
-            linenum += 1
-    
-    return players, headers
-
-def setbackup():
-    temp = raw_input('Set backup name, n for no backup: ')
-    if temp.lower() != 'n':
-        c.backup = 'backup\\%s' % temp
-        os.mkdir(c.workingdir + c.backup)
-        c.backup = 'backup\\%s\\' % temp
 
 def backup():
     
@@ -314,11 +323,27 @@ def saveas():
     setbackup()
     backup()
 
+def setnode():
+    if platform.node() == 'JoshLaptop':
+        c.workingdir = 'c:\\users\\josh\\dropbox\\football\\temp\\'
+
+def draft(team, cost = 0):
+    player = c.nom
+    player.append(team)
+    player.append(cost)
+    c.drafted.append(player)
+    c.teams[team].draft(player, cost)
+    
+    
+def roster(team):
+    c.teams[team].roster()
+
 def testall():
+    
     setupdraft()
     #setteams()
     backup()
-    recover()
+    #recover()
     qb()
     teams()    
 # --------------classes-------------------
